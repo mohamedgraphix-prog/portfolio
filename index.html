@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOHAMED HAMADA Design Master</title>
+    
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/8CjKDvKr/Whats-App-Image-2026-03-15-at-9-08-10-AM.jpg">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/8CjKDvKr/Whats-App-Image-2026-03-15-at-9-08-10-AM.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Cairo:wght@400;700;900&display=swap');
+
+        body {
+            background-color: #050505;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* منع التمرير أثناء شاشة الدخول */
+        body.locked { overflow: hidden; }
+
+        .stone-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13vw;
+            background: linear-gradient(180deg, #ffffff 0%, #888 50%, #222 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            font-style: italic;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+            line-height: 1;
+            opacity: 0;
+        }
+
+        .site-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background-image: url('https://i.postimg.cc/8CjKDvKr/Whats-App-Image-2026-03-15-at-9-08-10-AM.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            filter: blur(40px);
+        }
+
+        #entrance-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-card {
+            width: 260px;
+            height: 380px;
+            border-radius: 25px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+        }
+
+        .fixed-avatar {
+            width: 50px !important;
+            height: 50px !important;
+            border-radius: 50% !important;
+            position: fixed !important;
+            top: 25px !important;
+            right: 25px !important;
+            z-index: 6000 !important;
+            border: 2px solid white !important;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+            display: none;
+            overflow: hidden;
+        }
+
+        .nav-icons {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4500;
+            display: flex;
+            gap: 12px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            padding: 8px 15px;
+            border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.1);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: rgba(255,255,255,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .nav-btn.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .section-box { display: none; opacity: 0; }
+        .section-box.active { display: block; opacity: 1; }
+
+        /* توحيد أحجام الصور في أعمالي */
+        .project-item {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* مربع */
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            position: relative;
+            background: #111;
+            /* الإعداد الأولي للتلاشي */
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .project-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .project-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .text-reveal { opacity: 0; transform: translateY(40px); }
+
+        /* Modal / Project Card Style */
+        #project-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 7000;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(15px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #111;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            transform: scale(0.9);
+            opacity: 0;
+            position: relative;
+        }
+
+        .modal-btn {
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .btn-like { background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-like.liked { color: #ff4757; border-color: #ff4757; background: rgba(255, 71, 87, 0.1); }
+        .btn-order { background: white; color: black; }
+    </style>
+</head>
+<body class="locked">
+
+    <div class="site-bg"></div>
+
+    <!-- Entrance Screen -->
+    <div id="entrance-screen">
+        <div class="hero-card" id="main-gate" onclick="unlockSite()">
+            <img src="https://i.postimg.cc/8CjKDvKr/Whats-App-Image-2026-03-15-at-9-08-10-AM.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+            <div class="absolute bottom-10 w-full text-center">
+                <span class="text-[9px] tracking-[6px] uppercase opacity-60 font-black">اضغط للدخول</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Project Card -->
+    <div id="project-modal" onclick="closeModal(event)">
+        <div class="modal-card" id="modal-content" onclick="event.stopPropagation()">
+            <img id="modal-img" src="" class="w-full aspect-square object-cover bg-black">
+            <div class="p-6 space-y-4">
+                <div class="space-y-1">
+                    <h3 id="modal-title" class="text-xl font-black">عنوان المشروع</h3>
+                    <p id="modal-desc" class="text-white/50 text-sm leading-relaxed">وصف المشروع يظهر هنا بالتفصيل.</p>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button id="like-btn" class="modal-btn btn-like" onclick="toggleLike()">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>أعجبني</span>
+                    </button>
+                    <a href="https://wa.me/201026402450" target="_blank" class="modal-btn btn-order">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>طلب تصميم مباشر</span>
+                    </a>
+                </div>
+            </div>
+            <button class="absolute top-4 left-4 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/70 hover:text-white" onclick="closeModal()">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Fixed Avatar Icon -->
+    <div id="static-avatar" class="fixed-avatar">
+        <img src="https://i.postimg.cc/8CjKDvKr/Whats-App-Image-2026-03-15-at-9-08-10-AM.jpg" class="w-full h-full object-cover">
+    </div>
+
+    <!-- Nav Bar -->
+    <nav class="nav-icons" id="main-nav">
+        <button onclick="navTo('home')" class="nav-btn active" id="btn-home"><i class="fa-solid fa-house"></i></button>
+        <button onclick="navTo('works')" class="nav-btn" id="btn-works"><i class="fa-solid fa-palette"></i></button>
+        <button onclick="navTo('contact')" class="nav-btn" id="btn-contact"><i class="fa-solid fa-paper-plane"></i></button>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <main id="content-wrap" class="opacity-0">
+        
+        <!-- HOME SECTION -->
+        <section id="home" class="section-box active px-6 pt-24 pb-20">
+            <div class="min-h-[60vh] flex flex-col items-center justify-center text-center overflow-hidden">
+                <h1 class="stone-text" id="main-title">Portfolio</h1>
+                <p class="text-[9px] tracking-[10px] uppercase text-white/20 mt-6 text-reveal">Design Authority 2026</p>
+            </div>
+
+            <div class="space-y-48">
+                <div class="flex flex-col md:flex-row items-center gap-10 overflow-hidden section-row" data-dir="left">
+                    <div class="project-item shadow-2xl img-slide-left" style="cursor:default">
+                        <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80" alt="Graphic Design">
+                    </div>
+                    <div class="w-full space-y-4 text-reveal">
+                        <h3 class="text-3xl font-black italic uppercase">Digital Soul</h3>
+                        <p class="text-white/40 text-sm italic">Design is the silent ambassador of your brand.</p>
+                        <p class="text-lg font-bold border-r-2 border-white pr-4 text-right">التصميم هو السفير الصامت الذي يحكي قصة علامتك التجارية دون كلمات.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10 overflow-hidden section-row" data-dir="right">
+                    <div class="project-item shadow-2xl img-slide-right" style="cursor:default">
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80" alt="Visual Strategy">
+                    </div>
+                    <div class="w-full space-y-4 text-right text-reveal">
+                        <h3 class="text-3xl font-black italic uppercase">Visual Strategy</h3>
+                        <p class="text-white/40 text-sm text-left italic">Merging pure creativity with strategy.</p>
+                        <p class="text-lg font-bold border-l-2 border-white pl-4 text-left">ندمج الإبداع الخالص مع التخطيط الاستراتيجي لبناء هويات خالدة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKS SECTION -->
+        <section id="works" class="section-box px-6 pt-32 pb-20">
+            <h2 class="text-4xl font-black italic uppercase text-center mb-16">Selected Projects</h2>
+            <div id="projects-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- يتم توليد المشاريع بواسطة JS -->
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="section-box px-6 pt-40 pb-20 text-center">
+            <h2 class="text-6xl font-black italic uppercase mb-10 leading-none">Let's <br/> Create.</h2>
+            <p class="text-white/40 mb-14">حول أفكارك إلى تحفة فنية بلمسة احترافية.</p>
+            <a href="https://wa.me/201026402450" target="_blank" class="inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-[10px] tracking-[4px]">
+                <span>تواصل عبر واتساب</span>
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+            </a>
+        </section>
+
+        <div class="flex flex-col items-center py-20 space-y-12">
+            <div class="flex gap-10">
+                <a href="#" class="text-2xl text-white/30 hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="text-2xl text-white/30 hover:text-white transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#" class="text-2xl text-white/30 hover:text-white transition-all"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+            <p class="text-[7px] tracking-[10px] uppercase opacity-20">SALMA.AHMED.Digital© 2026</p>
+        </div>
+    </main>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const projects = [
+            { id: '1', 
+        title: 'تناغم بصري', 
+        category: 'social', 
+        desc: 'تصميم يعتمد على فلسفة المساحات الهادئة لإبراز المنتج بشكل أنيق وعصري.', 
+        img: 'https://i.postimg.cc/y87TPbwR/Whats-App-Image-2026-03-15-at-9-08-13-AM.jpg' 
+    },
+    { 
+        id: '2', 
+        title: 'طاقة الألوان', 
+        category: 'social', 
+        desc: 'استخدام تباين لوني جريء لزيادة نسبة التفاعل مع المحتوى الرقمي.', 
+        img: 'https://i.postimg.cc/15hBgtBr/Whats-App-Image-2026-03-15-at-9-08-12-AM-(1).jpg' 
+    },
+    { 
+        id: '3', 
+        title: 'تكوين احترافي', 
+        category: 'social', 
+        desc: 'توزيع فني للعناصر البصرية يضمن إيصال الرسالة التسويقية في ثوانٍ معدودة.', 
+        img: 'https://i.postimg.cc/tJPzSQRH/Whats-App-Image-2026-03-15-at-9-08-11-AM.jpg' 
+    },
+    { 
+        id: '4', 
+        title: 'لمسة عصرية', 
+        category: 'social', 
+        desc: 'دمج الخطوط الحديثة مع عناصر الجرافيك لخلق محتوى بصري فريد ومميز.', 
+        img: 'https://i.postimg.cc/8574vfqk/Whats-App-Image-2026-03-15-at-9-08-11-AM-(2).jpg' 
+    },
+    { 
+        id: '5', 
+        title: 'إبداع رقمي', 
+        category: 'social', 
+        desc: 'صناعة محتوى مرئي مخصص لمنصات التواصل يجمع بين الفن واستراتيجيات التسويق.', 
+        img: 'https://i.postimg.cc/3wS9WFfc/Whats-App-Image-2026-03-15-at-9-08-09-AM.jpg' 
+    },
+    { 
+        id: '6', 
+        title: 'هوية مرنة', 
+        category: 'social', 
+        desc: 'تصميم بوستات متسقة مع روح البراند تساهم في بناء ثقة دائمة مع الجمهور.', 
+        img: 'https://i.postimg.cc/VNLDYVgS/Whats-App-Image-2026-03-15-at-9-08-09-AM-(2).jpg' 
+    },
+    { 
+        id: '7', 
+        title: 'تفاصيل دقيقة', 
+        category: 'social', 
+        desc: 'التركيز على جودة الإخراج والظلال لإعطاء عمق واقعي واحترافي للتصميم.', 
+        img: 'https://i.postimg.cc/fRs8PL0X/Whats-App-Image-2026-03-15-at-9-08-08-AM.jpg' 
+    },
+    { 
+        id: '8', 
+        title: 'تفاعل ذكي', 
+        category: 'social', 
+        desc: 'بوستات مصممة خصيصاً لتحفيز الجمهور على المشاركة وإبداء الإعجاب.', 
+        img: 'https://i.postimg.cc/Wbg9SrtP/Whats-App-Image-2026-03-15-at-9-08-09-AM-(1).jpg' 
+    },
+    { 
+        id: '9', 
+        title: 'فن الدمج', 
+        category: 'social', 
+        desc: 'دمج عناصر خيالية مع صور واقعية لتقديم تجربة بصرية غير تقليدية.', 
+        img: 'https://i.postimg.cc/fR7xSfyX/Whats-App-Image-2026-03-15-at-9-08-12-AM.jpg' 
+    },
+    { 
+        id: '10', 
+        title: 'أناقة التصميم', 
+        category: 'social', 
+        desc: 'أسلوب تبسيطي يركز على جوهر الفكرة دون تشتيت انتباه المتابع.', 
+        img: 'https://i.postimg.cc/R0Mw7Jn4/Whats-App-Image-2026-03-15-at-9-08-12-AM-(2).jpg' 
+    },
+    { 
+        id: '11', 
+        title: 'رؤية مستقبلية', 
+        category: 'social', 
+        desc: 'استخدام تأثيرات ضوئية وألوان نيون تعكس الحداثة والتطور في التصميم.', 
+        img: 'https://i.postimg.cc/76R7rBsR/Whats-App-Image-2026-03-15-at-9-08-11-AM-(1).jpg' 
+    },
+    { 
+        id: '12', 
+        title: 'جذب بصري', 
+        category: 'social', 
+        desc: 'تصميم يركز على التسلسل الهرمي للمعلومات لضمان قراءة سريعة وممتعة.', 
+        img: 'https://i.postimg.cc/tR1vZ8jN/Whats-App-Image-2026-03-15-at-9-08-10-AM-(1).jpg' 
+    }
+];
+
+        // توليد شبكة المشاريع
+        const grid = document.getElementById('projects-grid');
+        projects.forEach(project => {
+            const div = document.createElement('div');
+            div.className = 'project-item reveal-item'; // إضافة كلاس للتعرف عليها في الأنيميشن
+            div.innerHTML = `<img src="${project.img}" loading="lazy">`;
+            div.onclick = () => openProject(project);
+            grid.appendChild(div);
+        });
+
+        function unlockSite() {
+            const gate = document.getElementById('main-gate');
+            const screen = document.getElementById('entrance-screen');
+            const nav = document.getElementById('main-nav');
+            const content = document.getElementById('content-wrap');
+            const avatar = document.getElementById('static-avatar');
+            const title = document.getElementById('main-title');
+
+            gsap.to(gate, {
+                top: 25, right: 25, x: 0, y: 0, width: 50, height: 50,
+                borderRadius: "50%", duration: 1.2, ease: "expo.inOut",
+                onComplete: () => {
+                    gate.style.display = 'none';
+                    avatar.style.display = 'block';
+                    document.body.classList.remove('locked');
+                    // تفعيل الأنيميشن بعد الدخول
+                    initScrollAnims();
+                }
+            });
+
+            gsap.to(screen, { opacity: 0, duration: 0.8, delay: 0.6, onComplete: () => screen.style.display = 'none' });
+            gsap.to([nav, content], { opacity: 1, visibility: 'visible', duration: 1.2, delay: 0.8 });
+
+            gsap.fromTo(title, { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 2, delay: 1.2, ease: "power4.out" });
+        }
+
+        function initScrollAnims() {
+            // تأثير التلاشي للعناصر في قسم الهوم
+            document.querySelectorAll('.section-row').forEach(row => {
+                const img = row.querySelector('.project-item');
+                const text = row.querySelector('.text-reveal');
+                const direction = row.getAttribute('data-dir');
+
+                gsap.fromTo(img, 
+                    { x: direction === 'left' ? -100 : 100, opacity: 0 },
+                    { 
+                        x: 0, opacity: 1, duration: 1, 
+                        scrollTrigger: { 
+                            trigger: row, 
+                            start: "top 90%", 
+                            end: "top 20%",
+                            toggleActions: "play reverse play reverse" // يختفي عند العودة للأعلى
+                        }
+                    }
+                );
+
+                gsap.fromTo(text, 
+                    { y: 50, opacity: 0 },
+                    { 
+                        y: 0, opacity: 1, duration: 1, delay: 0.2, 
+                        scrollTrigger: { 
+                            trigger: row, 
+                            start: "top 90%", 
+                            end: "top 20%",
+                            toggleActions: "play reverse play reverse"
+                        }
+                    }
+                );
+            });
+
+            // تأثير التلاشي لشبكة المشاريع (يظهر ويختفي حسب التمرير)
+            document.querySelectorAll('.reveal-item').forEach(item => {
+                gsap.to(item, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 95%", // يبدأ بالظهور عند اقترابه من الأسفل
+                        end: "bottom 5%",  // يبدأ بالتلاشي عند اقترابه من الأعلى جداً
+                        toggleActions: "play reverse play reverse", // السر هنا: يعكس الحركة عند الخروج من الشاشة
+                    }
+                });
+            });
+        }
+
+        function navTo(id) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + id).classList.add('active');
+            const current = document.querySelector('.section-box.active');
+            const target = document.getElementById(id);
+            if(current === target) return;
+
+            gsap.to(current, { opacity: 0, y: 15, duration: 0.4, onComplete: () => {
+                current.classList.remove('active');
+                target.classList.add('active');
+                gsap.fromTo(target, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.6 });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // تحديث ScrollTrigger عند تغيير الأقسام
+                ScrollTrigger.refresh();
+            }});
+        }
+
+        /* Modal Logic */
+        const modal = document.getElementById('project-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalImg = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const likeBtn = document.getElementById('like-btn');
+
+        function openProject(project) {
+            modalImg.src = project.img;
+            modalTitle.innerText = project.title;
+            modalDesc.innerText = project.desc;
+            modal.style.display = 'flex';
+            likeBtn.classList.remove('liked');
+            likeBtn.querySelector('span').innerText = 'أعجبني';
+
+            gsap.fromTo(modalContent, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" });
+            document.body.classList.add('locked');
+        }
+
+        function closeModal() {
+            gsap.to(modalContent, { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => {
+                modal.style.display = 'none';
+                document.body.classList.remove('locked');
+            }});
+        }
+
+        function toggleLike() {
+            likeBtn.classList.toggle('liked');
+            const text = likeBtn.querySelector('span');
+            if(likeBtn.classList.contains('liked')) {
+                text.innerText = 'تم الإعجاب';
+                gsap.from(likeBtn, { scale: 1.2, duration: 0.2 });
+            } else {
+                text.innerText = 'أعجبني';
+            }
+        }
+    </script>
+</body>
+</html>
